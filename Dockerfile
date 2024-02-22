@@ -25,10 +25,24 @@ RUN apt-get update && apt-get install -y \
  && rm -rf /var/lib/apt/lists/*
   
 RUN a2enmod rewrite
+# نصب PHP و ماژول های مورد نیاز
+RUN apt-get update && apt-get install -y php7.4 libapache2-mod-php7.4 php7.4-mysql
 
-RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql
+# نصب MySQL و ایجاد دیتابیس
+RUN apt-get install -y mysql-server
+RUN service mysql start && mysql -e "CREATE DATABASE renderdb;"
 
-RUN docker-php-ext-install pdo pdo_pgsql
+# فعال سازی mysqli
+RUN docker-php-ext-install mysqli
+
+# نصب و راه اندازی PHPMyAdmin
+RUN apt-get install -y phpmyadmin
+RUN ln -s /etc/phpmyadmin/apache.conf /etc/apache2/sites-enabled/phpmyadmin.conf
+RUN service apache2 restart
+
+
+
+
 
 COPY ./deploy/ /var/www/html
 
@@ -48,8 +62,9 @@ RUN composer update
 
 # RUN composer update
 
-# Exposer le port 80 pour permettre les connexions entrantes
-EXPOSE 80
+# تنظیمات وب سرور
+EXPOSE 80 443
+EXPOSE 3306
 
 # Définir l'entrée de l'application
 CMD ["apache2-foreground"]
