@@ -11,6 +11,8 @@ RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
 RUN apt-get update && apt-get install -y \
     curl \
     git \
+    libapache2-mod-php7.4 \
+    php7.4-mysql \
     libbz2-dev \
     libfreetype6-dev \
     libicu-dev \
@@ -26,7 +28,7 @@ RUN apt-get update && apt-get install -y \
   
 RUN a2enmod rewrite
 # نصب PHP و ماژول های مورد نیاز
-RUN apt-get update && apt-get install -y php7.4 libapache2-mod-php7.4 php7.4-mysql
+  
 
 # نصب MySQL و ایجاد دیتابیس
 RUN apt-get install -y mysql-server
